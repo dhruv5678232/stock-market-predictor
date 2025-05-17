@@ -12,17 +12,21 @@ st.set_page_config(page_title="Stock Market Analysis Dashboard", layout="wide", 
 # Loading and preparing data
 @st.cache_data
 def load_data():
-    file_path = r"C:\Users\Dhruv Patel\Downloads\stocks.csv"
+    file_path = "stocks.csv"  # File should be in the same directory as app.py
     if not os.path.exists(file_path):
-        st.error(f"File not found at {file_path}. Please ensure the file exists.")
+        st.error(f"Data file 'stocks.csv' not found in the repository. Please ensure the file is uploaded to the GitHub repository.")
         return None
-    df = pd.read_csv(file_path)
-    df['Date'] = pd.to_datetime(df['Date'])
-    df = df.sort_values(['Ticker', 'Date'])
-    # Data cleaning: Remove duplicates and handle missing values
-    df = df.drop_duplicates()
-    df = df.dropna()
-    return df
+    try:
+        df = pd.read_csv(file_path)
+        df['Date'] = pd.to_datetime(df['Date'])
+        df = df.sort_values(['Ticker', 'Date'])
+        # Data cleaning: Remove duplicates and handle missing values
+        df = df.drop_duplicates()
+        df = df.dropna()
+        return df
+    except Exception as e:
+        st.error(f"Error loading data: {str(e)}")
+        return None
 
 # Calculating 20-day moving averages
 def calculate_moving_averages(df, window=20):
